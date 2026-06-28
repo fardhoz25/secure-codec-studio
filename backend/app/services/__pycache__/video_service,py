@@ -1,0 +1,31 @@
+def process_video(path, mode, message=None):
+
+    if mode == "compress":
+        return compress(path)
+
+    elif mode == "decompress":
+        return decompress(path)
+
+    elif mode == "stego":
+        return stego(path, message)
+
+    elif mode == "extract":
+        return extract(path)
+
+    raise ValueError("Processing failed")
+
+
+def compress(path):
+    raise NotImplementedError()
+
+
+def decompress(path):
+    raise NotImplementedError()
+
+
+def stego(path, message):
+    raise NotImplementedError()
+
+
+def extract(path):
+    raise NotImplementedError()
