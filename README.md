@@ -222,25 +222,19 @@ Business logic is placed inside **services**, while algorithms are isolated insi
 # Image Processing Flow
 
 Upload Image
-        │
-        ▼
+        ↓
 Select Compression Type
-        │
+        ↓
  ┌───────────────┐
- │               │
- ▼               ▼
+ ↓               ↓
 Lossless      Lossy
- │               │
- ▼               ▼
+ ↓               ↓
 RLE         Quality Reduction
- │               │
- ▼               ▼
+ ↓               ↓
 .rle         Compressed Image
- │
- ▼
+ ↓
 Decompress
- │
- ▼
+ ↓
 Original Image
 
 
