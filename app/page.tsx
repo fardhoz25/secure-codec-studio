@@ -16,6 +16,7 @@ export default function Home() {
   const [result, setResult] = useState<ProcessingResult | null>(null);
   const [secretMessage, setSecretMessage] = useState('');
   const [stegoSubMode, setStegoSubMode] = useState<'hide' | 'extract'>('hide');
+  const [compressType, setCompressType] = useState<'lossy' | 'lossless'>('lossy');
 
   const handleFileUpload = useCallback((file: UploadedFile) => {
     setUploadedFile(file);
@@ -34,6 +35,7 @@ export default function Home() {
     setResult(null);
     setSecretMessage('');
     setStegoSubMode('hide');
+    setCompressType('lossy');
   };
 
   const handleProcess = async () => {
@@ -41,79 +43,113 @@ export default function Home() {
     setIsProcessing(true);
     setResult(null);
 
-    const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    await delay(600 + Math.random() * 800);
+    try {
+      const formData = new FormData();
+      formData.append('file', uploadedFile.file);
 
-    const originalSize = uploadedFile.size;
-    const start = Date.now();
-
-    if (mode === 'compression') {
-      const processedSize = Math.floor(originalSize * (0.3 + Math.random() * 0.3));
-      const ratio = Math.round(((originalSize - processedSize) / originalSize) * 100);
-      const processingTime = Date.now() - start + Math.floor(Math.random() * 500 + 200);
-      setResult({
-        originalSize,
-        processedSize,
-        ratio,
-        processingTime,
-        mode,
-        processedUrl: uploadedFile.url,
-        processedName: `compressed_${uploadedFile.name}`,
-      });
-    } else if (mode === 'decompression') {
-      const processedSize = Math.floor(originalSize * (1.4 + Math.random() * 0.6));
-      const ratio = Math.round(((processedSize - originalSize) / originalSize) * 100);
-      const processingTime = Date.now() - start + Math.floor(Math.random() * 400 + 100);
-      setResult({
-        originalSize,
-        processedSize,
-        ratio,
-        processingTime,
-        mode,
-        processedUrl: uploadedFile.url,
-        processedName: `restored_${uploadedFile.name}`,
-      });
-    } else {
-      const processingTime = Date.now() - start + Math.floor(Math.random() * 300 + 100);
-      if (stegoSubMode === 'hide') {
-        setResult({
-          originalSize,
-          processedSize: originalSize,
-          ratio: 0,
-          processingTime,
-          mode,
-          stegoStatus: 'success',
-          processedUrl: uploadedFile.url,
-          processedName: `stego_${uploadedFile.name}`,
-        });
-      } else {
-        setResult({
-          originalSize,
-          processedSize: originalSize,
-          ratio: 0,
-          processingTime,
-          mode,
-          stegoStatus: 'success',
-          extractedMessage: 'This is a demo extraction. In a real implementation, LSB decoding would retrieve the hidden message from the media file.',
-        });
+      let backendMode = '';
+      if (mode === 'compression') backendMode = 'compress';
+      else if (mode === 'decompression') backendMode = 'decompress';
+      else if (mode === 'steganography') {
+        backendMode = stegoSubMode === 'hide' ? 'stego' : 'extract';
       }
-    }
 
-    setIsProcessing(false);
+      formData.append('mode', backendMode);
+
+      if (mode === 'compression') {
+        formData.append('compress_type', compressType);
+      }
+
+      if (mode === 'steganography' && stegoSubMode === 'hide' && secretMessage) {
+        formData.append('message', secretMessage);
+      }
+
+      let response: Response;
+      try {
+        response = await fetch('http://localhost:8000/process', {
+          method: 'POST',
+          body: formData,
+        });
+      } catch {
+        alert('Cannot connect to backend server.\nPastikan server Python (port 8000) sedang berjalan.');
+        return;
+      }
+
+      if (!response.ok) {
+        let errMsg = `Server error (${response.status})`;
+        try {
+          const errData = await response.json();
+          if (errData.message) errMsg = errData.message;
+        } catch {}
+        alert(`Processing failed: ${errMsg}`);
+        return;
+      }
+
+      const data = await response.json();
+
+      let previewUrl: string | undefined;
+      let processedUrl: string | undefined;
+      let processedName: string | undefined;
+      let processedType: string | undefined;
+
+      if (data.download_url) {
+        processedUrl = `http://localhost:8000${data.download_url}`;
+        previewUrl = `http://localhost:8000${data.download_url}${data.download_url.endsWith('.lossless') ? '?preview=true' : ''}`;
+        
+        processedName = data.download_url.split('/').pop()?.split('?')[0];
+
+        const parts = processedName?.split('.') ?? [];
+        let ext = parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+        if (ext === 'lossless' && parts.length >= 3) {
+           ext = parts[parts.length - 2].toLowerCase();
+        }
+        
+        const extToMime: Record<string, string> = {
+          mp4: 'video/mp4', avi: 'video/x-msvideo', mov: 'video/quicktime', mkv: 'video/x-matroska',
+          png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', bmp: 'image/bmp', webp: 'image/webp',
+          wav: 'audio/wav', mp3: 'audio/mpeg', ogg: 'audio/ogg', m4a: 'audio/mp4', aac: 'audio/aac', flac: 'audio/flac'
+        };
+        processedType = extToMime[ext] ?? uploadedFile.type;
+      }
+
+      setResult({
+        originalSize: data.original_size,
+        processedSize: data.processed_size,
+        ratio: data.compression_ratio,
+        processingTime: data.processing_time_ms,
+        mode,
+        stegoStatus:
+          mode === 'steganography' ? data.status : undefined,
+        extractedMessage: backendMode === 'extract' ? data.message : undefined,
+        processedUrl, // For the download button
+        previewUrl,   // For the MediaPreview component
+        processedName,
+        processedType,
+        psnr: data.psnr,
+        mse:  data.mse,
+      });
+    } catch (error) {
+      console.error('Error during processing:', error);
+      alert('An error occurred while processing the file.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  const showMediaPreview = uploadedFile?.status === 'complete' && (
-    uploadedFile.type.startsWith('image/') ||
-    uploadedFile.type.startsWith('video/') ||
-    uploadedFile.type.startsWith('audio/')
-  );
+  // Show original file preview whenever a file is uploaded (both before AND after processing)
+  const isMediaFile =
+    uploadedFile?.status === 'complete' &&
+    (uploadedFile.type.startsWith('image/') ||
+     uploadedFile.type.startsWith('video/') ||
+     uploadedFile.type.startsWith('audio/') ||
+     uploadedFile.name.endsWith('.lossless') ||
+     result?.previewUrl);
 
   return (
-    <div className="min-h-screen bg-[#0B1220] text-white">
-      
+    <div className="min-h-screen flex flex-col bg-[#0B1220] text-white">
       <Header />
 
-      <main className="max-w-2xl mx-auto px-4 py-10 flex flex-col gap-5">
+      <main className="flex-grow w-full max-w-2xl mx-auto px-4 py-10 flex flex-col gap-5">
         {/* Mode Selector */}
         <ModeSelector mode={mode} onChange={handleModeChange} />
 
@@ -136,6 +172,8 @@ export default function Home() {
                 onSecretMessageChange={setSecretMessage}
                 stegoSubMode={stegoSubMode}
                 onStegoSubModeChange={setStegoSubMode}
+                compressType={compressType}
+                onCompressTypeChange={setCompressType}
                 onProcess={handleProcess}
               />
             </div>
@@ -160,9 +198,35 @@ export default function Home() {
         {/* Result Cards */}
         {result && !isProcessing && <ResultCards result={result} />}
 
-        {/* Media Preview */}
-        {showMediaPreview && !isProcessing && (
-          <MediaPreview uploadedFile={uploadedFile!} />
+        {/* ── PREVIEW SECTION ──────────────────────────────────────────────── */}
+        {!isProcessing && isMediaFile && (
+          <>
+            {/* Original file preview — always shown when a file is loaded */}
+            <MediaPreview
+              label="Original File"
+              uploadedFile={uploadedFile!}
+            />
+
+            {/* Processed file preview — shown after successful processing */}
+            {result?.previewUrl && (
+              <MediaPreview
+                label={
+                  mode === 'compression'   ? 'Compressed File' :
+                  mode === 'decompression' ? 'Decompressed File' :
+                  'Stego File'
+                }
+                uploadedFile={{
+                  file:     new File([], result.processedName ?? 'processed'),
+                  name:     result.processedName ?? 'processed',
+                  size:     result.processedSize,
+                  type:     result.processedType ?? uploadedFile!.type,
+                  url:      result.previewUrl,
+                  progress: 100,
+                  status:   'complete',
+                }}
+              />
+            )}
+          </>
         )}
 
         {/* Empty state hint */}
@@ -173,7 +237,6 @@ export default function Home() {
         )}
       </main>
       <Footer />
-      </div>
-    
+    </div>
   );
 }

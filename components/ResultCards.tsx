@@ -1,6 +1,6 @@
 'use client';
 
-import { FileIcon, FileArchive, BarChart2, Clock, Download, CheckCircle, XCircle, MessageSquare } from 'lucide-react';
+import { FileIcon, FileArchive, BarChart2, Clock, Download, CheckCircle, XCircle, MessageSquare, Activity, Gauge } from 'lucide-react';
 import type { Mode } from './ModeSelector';
 
 export interface ProcessingResult {
@@ -12,7 +12,11 @@ export interface ProcessingResult {
   stegoStatus?: 'success' | 'failed';
   extractedMessage?: string;
   processedUrl?: string;
+  previewUrl?: string;
   processedName?: string;
+  processedType?: string;
+  psnr?: number | null;
+  mse?: number | null;
 }
 
 interface ResultCardsProps {
@@ -47,6 +51,18 @@ function StatCard({ icon, label, value, sub }: StatCardProps) {
 
 export default function ResultCards({ result }: ResultCardsProps) {
   const isSteganography = result.mode === 'steganography';
+
+  const handleDownload = () => {
+    if (!result.processedUrl || !result.processedName) return;
+    // Use native browser download to avoid hanging the page on large files (like uncompressed AVI)
+    const link = document.createElement('a');
+    link.href = `${result.processedUrl}?download=true`;
+    link.download = result.processedName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="rounded-xl border border-[#1F2A44] bg-[#111A2E] p-5 animate-fadeIn">
@@ -107,15 +123,35 @@ export default function ResultCards({ result }: ResultCardsProps) {
         </div>
       )}
 
-      {!isSteganography && result.processedUrl && (
-        <a
-          href={result.processedUrl}
-          download={result.processedName}
+      {result.processedUrl && (
+        <button
+          onClick={handleDownload}
           className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold shadow-lg shadow-blue-500/20 hover:bg-blue-500 transition-all duration-150"
         >
           <Download className="w-4 h-4" />
           Download Processed File
-        </a>
+        </button>
+      )}
+
+      {!isSteganography && (result.psnr != null || result.mse != null) && (
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          {result.psnr != null && (
+            <StatCard
+              icon={<Activity className="w-3.5 h-3.5" />}
+              label="PSNR"
+              value={result.psnr === Infinity ? '∞ dB' : `${result.psnr} dB`}
+              sub="Peak Signal-to-Noise Ratio"
+            />
+          )}
+          {result.mse != null && (
+            <StatCard
+              icon={<Gauge className="w-3.5 h-3.5" />}
+              label="MSE"
+              value={`${result.mse}`}
+              sub="Mean Squared Error"
+            />
+          )}
+        </div>
       )}
     </div>
   );

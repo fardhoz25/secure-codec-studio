@@ -15,9 +15,6 @@ export default function Header() {
             <span className="text-[12px] text-[#4A5578] font-medium">Multimedia Compression &amp; Steganography Tool</span>
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[12px] font-medium text-[#4A5578] px-2.5 py-1 rounded-full border border-[#1F2A44] bg-[#111A2E]">Studio</span>
-        </div>
       </div>
     </header>
   );

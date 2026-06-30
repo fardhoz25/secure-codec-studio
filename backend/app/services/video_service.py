@@ -1,14 +1,20 @@
 import os
 import time
 
-from app.algorithms.image.kmeans import (
-    compress_image_kmeans,
-    decompress_image_kmeans
+from app.algorithms.video.compression import (
+    compress_video,
+    decompress_video,
+    compression_ratio
 )
-from app.algorithms.image.lsb import encode_lsb, decode_lsb
-from app.algorithms.metrics import calculate_psnr, calculate_mse
 
-def process_image(path: str, mode: str, compress_type: str = "lossy", message: str = None):
+from app.algorithms.video.lsb import (
+    encode_lsb,
+    decode_lsb
+)
+
+from app.algorithms.metrics import calculate_video_psnr, calculate_video_mse
+
+def process_video(path: str, mode: str, compress_type: str = "lossy", message: str = None):
     if mode == "compress":
         return compress(path, compress_type)
     elif mode == "decompress":
@@ -31,20 +37,20 @@ def compress(path: str, compress_type: str):
         compress_lossless(path, output_path)
         psnr = float('inf')
         mse = 0.0
-        msg = "Image compressed losslessly using Zlib"
+        msg = "Video compressed losslessly using Zlib"
     else:
-        output_path = os.path.join(os.path.dirname(path), f"{filename}_compressed.jpg")
-        compress_image_kmeans(path, output_path, k=128)
-        psnr = calculate_psnr(path, output_path)
-        mse = calculate_mse(path, output_path)
-        msg = "Image compressed using K-Means Quantization (Lossy)"
+        output_path = os.path.join(os.path.dirname(path), f"{filename}_compressed.mp4")
+        compress_video(path, output_path)
+        psnr = calculate_video_psnr(path, output_path)
+        mse = calculate_video_mse(path, output_path)
+        msg = "Video compressed using Frame Dropping & Resizing (Lossy)"
 
     original_size = os.path.getsize(path)
     processed_size = os.path.getsize(output_path)
 
     return {
         "status": "success",
-        "media_type": "image",
+        "media_type": "video",
         "original_size": original_size,
         "processed_size": processed_size,
         "compression_ratio": round(((original_size - processed_size) / original_size) * 100, 2) if original_size > 0 else 0,
@@ -62,11 +68,11 @@ def decompress(path: str):
     parts = os.path.basename(path).split('.')
     if path.lower().endswith(".lossless"):
         filename = parts[0]
-        real_ext = f".{parts[-2]}" if len(parts) >= 3 else ".png"
+        real_ext = f".{parts[-2]}" if len(parts) >= 3 else ".mp4"
         output_path = os.path.join(os.path.dirname(path), f"{filename}_restored{real_ext}")
         from app.algorithms.lossless.zlib_codec import decompress_lossless
         decompress_lossless(path, output_path)
-        msg = "Image restored perfectly (Lossless)"
+        msg = "Video restored perfectly (Lossless)"
     else:
         raise ValueError(
             "File ini adalah hasil kompresi Lossy (atau file original). "
@@ -79,7 +85,7 @@ def decompress(path: str):
 
     return {
         "status": "success",
-        "media_type": "image",
+        "media_type": "video",
         "original_size": original_size,
         "processed_size": processed_size,
         "compression_ratio": round(((processed_size - original_size) / original_size) * 100, 2) if original_size > 0 else 0,
@@ -92,18 +98,30 @@ def decompress(path: str):
 def stego(path, message):
     if not message:
         raise ValueError("Message is required")
+
     start = time.time()
+
     filename = os.path.splitext(os.path.basename(path))[0]
-    output_path = os.path.join(os.path.dirname(path), f"{filename}_stego.png")
+    # Using .avi for uncompressed output to preserve LSBs
+    output_path = os.path.join(
+        os.path.dirname(path),
+        f"{filename}_stego.avi"
+    )
+
     encode_lsb(path, output_path, message)
+
     original_size = os.path.getsize(path)
     processed_size = os.path.getsize(output_path)
+
     return {
         "status": "success",
-        "media_type": "image",
+        "media_type": "video",
         "original_size": original_size,
         "processed_size": processed_size,
-        "compression_ratio": round(((processed_size - original_size) / original_size) * 100, 2) if original_size > 0 else 0,
+        "compression_ratio": compression_ratio(
+            original_size,
+            processed_size
+        ),
         "processing_time_ms": int((time.time() - start) * 1000),
         "message": "Hidden message embedded successfully",
         "output_path": output_path
@@ -112,11 +130,14 @@ def stego(path, message):
 
 def extract(path):
     start = time.time()
+
     message = decode_lsb(path)
+
     original_size = os.path.getsize(path)
+
     return {
         "status": "success",
-        "media_type": "image",
+        "media_type": "video",
         "original_size": original_size,
         "processed_size": original_size,
         "compression_ratio": 1.0,

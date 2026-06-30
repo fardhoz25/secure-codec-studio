@@ -11,6 +11,8 @@ The application supports both **Lossless Compression** and **Lossy Compression**
 
 Current capabilities include image compression, decompression, steganography, and hidden message extraction, while audio and video modules are being developed incrementally.
 
+---
+
 # Features
 
 ## Compression Types
@@ -24,7 +26,7 @@ Characteristics:
 - Original data can be recovered completely
 - Supports decompression
 - Suitable for archival and editing
-- Uses Run Length Encoding (RLE)
+- Uses Zlib Compression Algorithm
 
 ---
 
@@ -43,7 +45,7 @@ Characteristics:
 
 ### Lossless Compression
 
-- Run Length Encoding (RLE)
+- Zlib Algorithm
 - Supports Decompression
 
 ### Lossy Compression
@@ -60,25 +62,25 @@ Characteristics:
 
 ### Audio 
 
-- Delta Encoding
-- Run Length Encoding
+- Zlib Algorithm (Lossless)
+- FFmpeg libmp3lame (Lossy)
 - LSB Steganography
 
-Supported Format
+Supported Formats
 
-- WAV (16-bit PCM Mono)
+- WAV, MP3, OGG, M4A, AAC, FLAC
 
 ---
 
 ### Video 
 
-- Frame Difference Compression
-- Frame Sampling
-- LSB Frame Steganography
+- Zlib Algorithm (Lossless)
+- FFmpeg H.264 / libx264 (Lossy)
+- LSB with FFV1 Codec (Steganography)
 
-Supported Format
+Supported Formats
 
-- MP4
+- MP4, AVI, MOV, MKV
 
 ---
 
@@ -98,9 +100,9 @@ Supported Format
 
 - FastAPI
 - Python
-- Pillow
-- Wave
-- Struct
+- OpenCV
+- FFmpeg (FFV1, H.264)
+- Zlib
 
 ---
 
@@ -233,10 +235,10 @@ Business logic is placed inside **services**, while algorithms are isolated insi
       Lossless Compression     Lossy Compression
              │                       │
              ▼                       ▼
-      Run Length Encoding      Quality Reduction
+        Zlib Algorithm         Quality Reduction
              │                       │
              ▼                       ▼
-        Codec File (.rle)     Optimized Image
+    Codec File (.lossless)    Optimized Image
              │
              ▼
         Decompression
@@ -246,30 +248,28 @@ Business logic is placed inside **services**, while algorithms are isolated insi
 ```
 # Audio Processing Flow
 
-```
-
-Upload WAV
-
-↓
-
-Validate
-
-↓
-
-Delta Encoding
-
-↓
-
-Run Length Encoding
-
-↓
-
-Result
-
-↓
-
-Download
-
+```text
+                     Upload Audio
+                          │
+                          ▼
+           Select Compression Method
+                          │
+              ┌───────────┴───────────┐
+              │                       │
+              ▼                       ▼
+       Lossless Compression     Lossy Compression
+              │                       │
+              ▼                       ▼
+        Zlib Algorithm         FFmpeg libmp3lame
+              │                       │
+              ▼                       ▼
+     Codec File (.lossless)    Optimized Audio
+              │
+              ▼
+         Decompression
+              │
+              ▼
+        Original Audio Restored
 ```
 
 ---
@@ -333,6 +333,7 @@ Multipart Form Data
 - JPG
 - JPEG
 - BMP
+- WebP
 
 Maximum Size
 
@@ -346,7 +347,7 @@ Maximum Size
 
 ## Audio
 
-- WAV (16-bit PCM Mono)
+- WAV, MP3, OGG, M4A, AAC, FLAC
 
 Maximum Size
 
@@ -360,7 +361,7 @@ Maximum Size
 
 ## Video
 
-- MP4
+- MP4, AVI, MOV, MKV
 
 Maximum Size
 
@@ -376,9 +377,9 @@ Maximum Size
 
 ## Image Compression
 
-Run Length Encoding (RLE)
+Zlib Algorithm & OpenCV JPEG
 
-Lossless image compression by encoding consecutive identical bytes.
+Lossless image compression via Zlib stream packaging, and Lossy compression via OpenCV JPEG encoding.
 
 ---
 
@@ -392,11 +393,9 @@ Hide text messages inside RGB image pixels without significant visual changes.
 
 ## Audio Compression
 
-Delta Encoding
+Zlib Algorithm & libmp3lame
 
-Stores the first sample followed by differences between consecutive samples.
-
-Combined with Run Length Encoding to reduce repetitive delta values.
+Lossless audio compression via Zlib stream packaging, and Lossy compression using FFmpeg's MP3 codec.
 
 ---
 
@@ -412,9 +411,9 @@ Embed text inside PCM audio samples.
 
 ## Video Compression
 
-Frame Difference
+Zlib Algorithm & H.264
 
-Store only frame differences between adjacent frames.
+Lossless video compression via Zlib stream packaging, and Lossy compression using FFmpeg's H.264 (libx264) codec.
 
 
 
@@ -428,7 +427,7 @@ Store only frame differences between adjacent frames.
 
 ### Lossless
 
-Run Length Encoding (RLE)
+Zlib Universal Algorithm
 
 Provides reversible compression where the original image can be reconstructed without information loss.
 
@@ -451,6 +450,15 @@ Embeds secret messages into RGB pixel values while maintaining minimal visual di
 ---
 
 # Running the Project
+
+## Prerequisites
+
+Before running this project, ensure you have the following installed on your system:
+- **Node.js** (v18 or higher)
+- **Python** (v3.10 or higher)
+- **FFmpeg**: Must be installed and added to your system's `PATH`. This is **critically required** for Audio and Video processing to work.
+
+---
 
 ## Clone Repository
 

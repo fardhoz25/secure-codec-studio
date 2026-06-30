@@ -138,7 +138,7 @@ export default function UploadDropzone({ uploadedFile, onFileUpload, onClear }: 
         ref={inputRef}
         type="file"
         className="hidden"
-        accept="image/*,video/*,audio/*,.png,.jpg,.jpeg,.mp4,.wav"
+        accept="image/png,image/jpeg,image/bmp,image/webp,video/mp4,video/x-msvideo,video/quicktime,video/webm,audio/wav,audio/mpeg,audio/ogg,audio/mp4,audio/aac,audio/flac,.png,.jpg,.jpeg,.bmp,.webp,.mp4,.avi,.mov,.mkv,.webm,.wav,.mp3,.ogg,.m4a,.aac,.mpeg,.flac,.lossless"
         onChange={onInputChange}
       />
       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-all duration-200 ${
@@ -147,7 +147,9 @@ export default function UploadDropzone({ uploadedFile, onFileUpload, onClear }: 
         <UploadCloud className={`w-7 h-7 transition-colors duration-200 ${dragging ? 'text-blue-400' : 'text-[#4A5578]'}`} />
       </div>
       <p className="text-sm font-medium text-white mb-1">Drop your file or click to upload</p>
-      <p className="text-xs text-[#4A5578]">Supports PNG, JPG, MP4, WAV</p>
+      <p className="text-xs text-[#4A5578]">
+        🖼 PNG · JPG · BMP · WebP &nbsp;|&nbsp; 🎬 MP4 · AVI · MOV &nbsp;|&nbsp; 🎵 WAV · MP3 · OGG &nbsp;|&nbsp; 📦 .lossless
+      </p>
     </div>
   );
 }
