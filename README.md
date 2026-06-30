@@ -17,17 +17,17 @@ Current capabilities include image compression, decompression, steganography, an
 
 | 1️⃣ Main User Interface | 2️⃣ Integrated Media Player |
 | :---: | :---: |
-| <!-- PASTE SCREENSHOT 1 HERE --> | <!-- PASTE SCREENSHOT 2 HERE --> |
+| <img width="100%" alt="Main User Interface" src="https://github.com/user-attachments/assets/0c16ab7b-2c43-484c-9414-8ee4d5774596" /> | <img width="100%" alt="Integrated Media Player" src="https://github.com/user-attachments/assets/9fea3b45-9135-472b-b8b9-7f648c84644a" /> |
 | **Clean & Responsive UI**: The main dashboard featuring a dark-themed dropzone and mode selection. | **Media Preview**: Built-in player to instantly render and playback processed Video, Audio, and Images. |
 
 | 3️⃣ Lossless Compression Analytics | 4️⃣ Lossy Compression Analytics |
 | :---: | :---: |
-| <!-- PASTE SCREENSHOT 3 HERE --> | <!-- PASTE SCREENSHOT 4 HERE --> |
+| <img width="100%" alt="Lossless Analytics" src="https://github.com/user-attachments/assets/8757ecb3-913f-49b9-978e-819a21fbdfbe" /> | <img width="100%" alt="Lossy Analytics" src="https://github.com/user-attachments/assets/2ebc7262-73ed-4583-9914-b71a40674185" /> |
 | **Data Preservation**: Results showing exact original data retention using the Zlib algorithm. | **Size Optimization**: Results demonstrating massive file size reduction and PSNR/MSE quality metrics. |
 
 | 5️⃣ Steganography (Hide Message) | 6️⃣ Steganography (Extract Message) |
 | :---: | :---: |
-| <!-- PASTE SCREENSHOT 5 HERE --> | <!-- PASTE SCREENSHOT 6 HERE --> |
+| <img width="100%" alt="Steganography Hide" src="https://github.com/user-attachments/assets/ef908d97-96ef-43c7-8766-cf3830cf338e" /> | <img width="100%" alt="Steganography Extract" src="https://github.com/user-attachments/assets/0103b111-ab0d-42b3-8c0c-5c72472ceb9f" /> |
 | **Secure Embedding**: Hiding a secret text message inside a media file via LSB. | **Data Extraction**: Successfully extracting and reading the hidden secret text from a stego file. |
 
 ---
