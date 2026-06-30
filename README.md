@@ -13,6 +13,25 @@ Current capabilities include image compression, decompression, steganography, an
 
 ---
 
+## 📸 Application Gallery
+
+| 1️⃣ Main User Interface | 2️⃣ Integrated Media Player |
+| :---: | :---: |
+| <!-- PASTE SCREENSHOT 1 HERE --> | <!-- PASTE SCREENSHOT 2 HERE --> |
+| **Clean & Responsive UI**: The main dashboard featuring a dark-themed dropzone and mode selection. | **Media Preview**: Built-in player to instantly render and playback processed Video, Audio, and Images. |
+
+| 3️⃣ Lossless Compression Analytics | 4️⃣ Lossy Compression Analytics |
+| :---: | :---: |
+| <!-- PASTE SCREENSHOT 3 HERE --> | <!-- PASTE SCREENSHOT 4 HERE --> |
+| **Data Preservation**: Results showing exact original data retention using the Zlib algorithm. | **Size Optimization**: Results demonstrating massive file size reduction and PSNR/MSE quality metrics. |
+
+| 5️⃣ Steganography (Hide Message) | 6️⃣ Steganography (Extract Message) |
+| :---: | :---: |
+| <!-- PASTE SCREENSHOT 5 HERE --> | <!-- PASTE SCREENSHOT 6 HERE --> |
+| **Secure Embedding**: Hiding a secret text message inside a media file via LSB. | **Data Extraction**: Successfully extracting and reading the hidden secret text from a stego file. |
+
+---
+
 # Features
 
 ## Compression Types
