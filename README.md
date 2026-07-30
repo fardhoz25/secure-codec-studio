@@ -474,6 +474,7 @@ See the [LICENSE](LICENSE) file for details.
 
 **Muhammad Wiguna Ilham**
 
+---
 Data Science Enthusiast
 
 Built with using Next.js and FastAPI.
