@@ -1,15 +1,40 @@
 # Secure Multimedia Codec Studio
+![Next.js](https://img.shields.io/badge/Next.js-15-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.116-009688)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4)
+![Vercel](https://img.shields.io/badge/Frontend-Vercel-000000)
+![Railway](https://img.shields.io/badge/Backend-Railway-0B0D0E)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 A full-stack web application for demonstrating **lossless multimedia compression** and **steganography** algorithms on digital media. This project is developed using a Single Page Application (SPA) architecture with **Next.js** as the frontend and **FastAPI** as the backend.
 
 ---
+### 🌐 Live Demo
+
+- Frontend:
+https://secure-codec-studio.vercel.app/
+
+- Backend API:
+https://secure-codec-studio-production.up.railway.app
+
+---
+
 ## Overview
 
-Secure Multimedia Codec Studio is a full-stack web application for demonstrating multimedia compression and steganography techniques on digital media.
+Secure Multimedia Codec Studio is a full-stack web application that demonstrates multimedia compression and Least Significant Bit (LSB) steganography across images, audio, and video.
 
-The application supports both **Lossless Compression** and **Lossy Compression**, allowing users to understand the fundamental differences between reversible and irreversible compression methods through an interactive web interface.
+The application supports both **Lossless Compression** and **Lossy Compression**, allowing users to understand the fundamental differences between reversible and irreversible compression methods through an interactive web interface and provides performance metrics such as compression ratio, processing time, PSNR, and MSE where applicable.
 
-Current capabilities include image compression, decompression, steganography, and hidden message extraction, while audio and video modules are being developed incrementally.
+---
+## Highlights
+
+- 🌐 Live Production Deployment
+- 🖼️ Image, Audio & Video Compression
+- 🔒 Least Significant Bit (LSB) Steganography
+- 📊 Compression Analytics (Ratio, PSNR, MSE)
+- ⚡ Built with Next.js + FastAPI
+- ☁️ Deployed on Vercel & Railway
 
 ---
 
@@ -31,92 +56,15 @@ Current capabilities include image compression, decompression, steganography, an
 | **Secure Embedding**: Hiding a secret text message inside a media file via LSB. | **Data Extraction**: Successfully extracting and reading the hidden secret text from a stego file. |
 
 ---
-
-# Features
-
-## Compression Types
-
-### Lossless Compression
-
-Lossless compression preserves all original information, allowing the compressed media to be fully restored.
-
-Characteristics:
-
-- Original data can be recovered completely
-- Supports decompression
-- Suitable for archival and editing
-- Uses Zlib Compression Algorithm
-
----
-
-### Lossy Compression
-
-Lossy compression permanently removes part of the original information to achieve a higher compression ratio.
-
-Characteristics:
-
-- Original data cannot be perfectly restored
-- Decompression is not supported
-- Optimized for storage efficiency
-- Suitable for multimedia distribution
-
-## Image
-
-### Lossless Compression
-
-- Zlib Algorithm
-- Supports Decompression
-
-### Lossy Compression
-
-- Quality Reduction Compression
-- Smaller output size
-- Decompression is not available
-
-### Steganography
-
-- Least Significant Bit (LSB)
-- Hide Secret Message
-- Extract Secret Message
-
-### Audio 
-
-- Zlib Algorithm (Lossless)
-- FFmpeg libmp3lame (Lossy)
-- LSB Steganography
-
-Supported Formats
-
-- WAV, MP3, OGG, M4A, AAC, FLAC
-
----
-
-### Video 
-
-- Zlib Algorithm (Lossless)
-- FFmpeg H.264 / libx264 (Lossy)
-- LSB with FFV1 Codec (Steganography)
-
-Supported Formats
-
-- MP4, AVI, MOV, MKV
-
----
-
 # Technology Stack
-
 ## Frontend
-
 - Next.js
 - React
 - TypeScript
 - Tailwind CSS
 - Lucide Icons
-
 ---
-
 ## Backend
-
 - FastAPI
 - Python
 - OpenCV
@@ -124,34 +72,62 @@ Supported Formats
 - Zlib
 
 ---
+# Features
 
+Secure Multimedia Codec Studio supports multimedia compression and steganography across images, audio, and video through a unified processing workflow.
+
+## Compression Modes
+
+| Mode | Description | Decompression |
+|------|-------------|---------------|
+| **Lossless Compression** | Reversible compression that preserves the original data using the Zlib algorithm. | ✅ Supported |
+| **Lossy Compression** | Irreversible compression that reduces file size by sacrificing part of the original information. | ❌ Not Supported |
+| **Steganography** | Hides and extracts secret text messages using the Least Significant Bit (LSB) technique. | N/A |
+
+## Compression Comparison
+
+| Feature | Lossless | Lossy |
+|----------|:--------:|:------:|
+| Original Data Preserved | ✅ | ❌ |
+| Can Be Decompressed | ✅ | ❌ |
+| Compression Ratio | Moderate | High |
+| Image Quality | Unchanged | Reduced |
+| Best Use Case | Archiving & Editing | Distribution & Storage |
+
+---
+
+## Supported Media
+
+| Media | Compression Algorithms | Steganography | Supported Formats | Max File Size |
+|--------|------------------------|---------------|-------------------|---------------|
+| **Image** | Zlib (Lossless), OpenCV JPEG (Lossy) | LSB | PNG, JPG, JPEG, BMP, WebP | 5 MB |
+| **Audio** | Zlib (Lossless), FFmpeg libmp3lame (Lossy) | LSB | WAV, MP3, OGG, M4A, AAC, FLAC | 10 MB |
+| **Video** | Zlib (Lossless), FFmpeg H.264/libx264 (Lossy) | LSB (FFV1) | MP4, AVI, MOV, MKV | 20 MB |
+
+---
+
+## Processing Capabilities
+
+- **Lossless Compression** with complete data preservation.
+- **Lossy Compression** for efficient multimedia storage.
+- **Lossless Decompression** for restoring compressed media.
+- **LSB Steganography** to embed secret messages.
+- **Hidden Message Extraction** from supported steganographic media.
+- **Compression Analytics** including Compression Ratio, Processing Time, PSNR, and MSE (where applicable).
+- **Integrated Media Preview** for processed images, audio, and video.
+
+---
 ## Storage
 
 All processed files are temporarily stored inside:
 
 ```
-
 backend/tmp/
-
 ```
 
 Temporary files are only used during processing.
 
 ---
-
-# Compression Concepts
-
-Secure Multimedia Codec Studio demonstrates two major categories of multimedia compression.
-
-| Feature | Lossless | Lossy |
-|----------|----------|--------|
-| Original Data Preserved | ✅ | ❌ |
-| Can Be Decompressed | ✅ | ❌ |
-| Information Loss | No | Yes |
-| Compression Ratio | Moderate | High |
-| Suitable For | Editing, Archiving | Distribution, Streaming |
-
-This comparison helps users understand the practical trade-offs between preserving data integrity and achieving higher compression efficiency.
 
 # Project Architecture
 
@@ -243,6 +219,7 @@ Business logic is placed inside **services**, while algorithms are isolated insi
 ## Compression Workflow
 
 ```text
+
                     Upload Image
                          │
                          ▼
@@ -264,6 +241,7 @@ Business logic is placed inside **services**, while algorithms are isolated insi
              │
              ▼
        Original Image Restored
+
 ```
 # Audio Processing Flow
 
@@ -298,9 +276,7 @@ Business logic is placed inside **services**, while algorithms are isolated insi
 ## Process File
 
 ```
-
 POST /process
-
 ```
 
 ### Request
@@ -330,245 +306,151 @@ Multipart Form Data
 ```
 
 ---
+# Environment Variables
 
-# Supported Modes
+Create a `.env.local` file in the project root and configure the following environment variables:
 
-| Mode              | Description                         |
-| ----------------- | ----------------------------------- |
-| Lossless Compress | Compress using reversible algorithm |
-| Decompress        | Restore lossless compressed media   |
-| Lossy Compress    | Compress with quality reduction     |
-| Steganography     | Hide secret message                 |
-| Extract           | Extract hidden message              |
+### Frontend
 
-
----
-
-# Supported File Types
-
-## Image
-
-- PNG
-- JPG
-- JPEG
-- BMP
-- WebP
-
-Maximum Size
-
+```env
+NEXT_PUBLIC_API_URL=https://your-backend.up.railway.app
 ```
 
-5 MB
-
-```
+> Replace the URL above with your deployed Railway backend endpoint.
 
 ---
-
-## Audio
-
-- WAV, MP3, OGG, M4A, AAC, FLAC
-
-Maximum Size
-
-```
-
-10 MB
-
-```
-
----
-
-## Video
-
-- MP4, AVI, MOV, MKV
-
-Maximum Size
-
-```
-
-20 MB
-
-```
-
----
-
-# Algorithms
-
-## Image Compression
-
-Zlib Algorithm & OpenCV JPEG
-
-Lossless image compression via Zlib stream packaging, and Lossy compression via OpenCV JPEG encoding.
-
----
-
-## Image Steganography
-
-Least Significant Bit (LSB)
-
-Hide text messages inside RGB image pixels without significant visual changes.
-
----
-
-## Audio Compression
-
-Zlib Algorithm & libmp3lame
-
-Lossless audio compression via Zlib stream packaging, and Lossy compression using FFmpeg's MP3 codec.
-
----
-
-## Audio Steganography
-
-Least Significant Bit (LSB)
-
-Embed text inside PCM audio samples.
-
-
-
----
-
-## Video Compression
-
-Zlib Algorithm & H.264
-
-Lossless video compression via Zlib stream packaging, and Lossy compression using FFmpeg's H.264 (libx264) codec.
-
-
-
----
-
-# Design Principles
-
-# Algorithms
-
-## Image Compression
-
-### Lossless
-
-Zlib Universal Algorithm
-
-Provides reversible compression where the original image can be reconstructed without information loss.
-
----
-
-### Lossy
-
-Quality-based Image Compression
-
-Reduces file size by decreasing image quality. The original image cannot be perfectly reconstructed after compression.
-
----
-
-### Image Steganography
-
-Least Significant Bit (LSB)
-
-Embeds secret messages into RGB pixel values while maintaining minimal visual distortion.
-
----
-
-# Running the Project
-
-## Prerequisites
+# Quick Start
 
 Before running this project, ensure you have the following installed on your system:
 - **Node.js** (v18 or higher)
 - **Python** (v3.10 or higher)
 - **FFmpeg**: Must be installed and added to your system's `PATH`. This is **critically required** for Audio and Video processing to work.
 
----
-
-## Clone Repository
+## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/secure-codec-studio.git
-
+git clone https://github.com/fardhoz25/secure-codec-studio.git
 cd secure-codec-studio
 ```
 
 ---
 
-## Backend
+## 2. Backend Setup
 
-Go to backend
+Navigate to the backend directory:
 
 ```bash
 cd backend
 ```
 
-Create virtual environment
+Create a virtual environment:
 
 ```bash
 python -m venv .venv
 ```
 
-Activate
+Activate the virtual environment.
 
-Windows
+**Windows**
 
 ```bash
 .venv\Scripts\activate
 ```
 
-Linux / macOS
+**Linux / macOS**
 
 ```bash
 source .venv/bin/activate
 ```
 
-Install dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run FastAPI
+Run the FastAPI server:
 
 ```bash
 python run.py
 ```
 
-Backend
+Backend will be available at:
 
 ```
 http://127.0.0.1:8000
 ```
 
-Swagger
-
-```
-http://127.0.0.1:8000/docs
-```
-
 ---
 
-## Frontend
+## 3. Frontend Setup
 
-Install packages
+Return to the project root:
+
+```bash
+cd ..
+```
+
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Run development server
+Run the development server:
 
 ```bash
 npm run dev
 ```
 
-Open
+Frontend will be available at:
 
 ```
 http://localhost:3000
 ```
 
+---
+# API Documentation
 
+The backend provides an interactive Swagger UI for exploring and testing all available API endpoints.
 
+### Production
+
+```
+https://secure-codec-studio-production.up.railway.app/docs
+```
+
+### Local Development
+
+```
+http://127.0.0.1:8000/docs
+```
+
+The API documentation includes:
+
+- File processing endpoint
+- Request parameters
+- Response schema
+- Interactive request testing
+- Validation errors
+
+---
+# Deployment
+
+The application is deployed as a decoupled full-stack architecture.
+
+| Service | Platform | URL |
+|----------|----------|-----|
+| Frontend | Vercel | https://secure-codec-studio.vercel.app/ |
+| Backend API | Railway | https://secure-codec-studio-production.up.railway.app |
+| API Docs | Railway Swagger | https://secure-codec-studio-production.up.railway.app/docs |
+
+The frontend communicates with the backend through the `NEXT_PUBLIC_API_URL` environment variable.
+
+---
 # Future Improvements
 
 - Stereo WAV support
-- Video compression optimization
 - Advanced lossy image compression
 - Better compression ratio for audio
 - Progressive processing
@@ -579,16 +461,18 @@ http://localhost:3000
 
 # License
 
-This project is developed for educational and research purposes.
+This project is licensed under the **MIT License**.
+
+See the [LICENSE](LICENSE) file for details.
 
 ---
 
 # Author
-
 **Fardho Zurrahman**
-**Muhammad Ridwan Ihsan**
-**Muhammad Wiguna Ilham**
 
+**Muhammad Ridwan Ihsan**
+
+**Muhammad Wiguna Ilham**
 
 Data Science Enthusiast
 
