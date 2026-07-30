@@ -3,5 +3,5 @@ uvicorn
 python-multipart
 Pillow
 numpy
-opencv-python
+opencv-python-headless
 moviepy
