@@ -65,15 +65,19 @@ export default function Home() {
       }
 
       let response: Response;
-      try {
-        response = await fetch('http://localhost:8000/process', {
-          method: 'POST',
-          body: formData,
-        });
-      } catch {
-        alert('Cannot connect to backend server.\nPastikan server Python (port 8000) sedang berjalan.');
-        return;
-      }
+
+try {
+  response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/process`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+} catch {
+  alert("Cannot connect to backend server.");
+  return;
+}
 
       if (!response.ok) {
         let errMsg = `Server error (${response.status})`;
@@ -93,9 +97,11 @@ export default function Home() {
       let processedType: string | undefined;
 
       if (data.download_url) {
-        processedUrl = `http://localhost:8000${data.download_url}`;
-        previewUrl = `http://localhost:8000${data.download_url}${data.download_url.endsWith('.lossless') ? '?preview=true' : ''}`;
-        
+        processedUrl = `${process.env.NEXT_PUBLIC_API_URL}${data.download_url}`;
+
+        previewUrl = `${process.env.NEXT_PUBLIC_API_URL}${data.download_url}${
+          data.download_url.endsWith(".lossless") ? "?preview=true" : ""
+        }`;
         processedName = data.download_url.split('/').pop()?.split('?')[0];
 
         const parts = processedName?.split('.') ?? [];
