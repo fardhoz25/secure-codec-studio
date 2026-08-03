@@ -306,19 +306,6 @@ Multipart Form Data
 ```
 
 ---
-# Environment Variables
-
-Create a `.env.local` file in the project root and configure the following environment variables:
-
-### Frontend
-
-```env
-NEXT_PUBLIC_API_URL=https://your-backend.up.railway.app
-```
-
-> Replace the URL above with your deployed Railway backend endpoint.
-
----
 # Quick Start
 
 Before running this project, ensure you have the following installed on your system:
